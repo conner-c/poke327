@@ -1,0 +1,1 @@
+Create a map for the Pokemon game. The map size is 80 wide and 21 tall. There are exits on each cardinal direction edge (N, S, E, W). The map is randomized to consists of different regions, clearings and tall grass. The border edges are immovable boulders. The different characters are represent as follows, % is a boulder, , is tall grass, . is a clearing, and # is a path.

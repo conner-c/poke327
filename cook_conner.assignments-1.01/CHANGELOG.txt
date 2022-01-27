@@ -1,0 +1,1 @@
+1/27/22: Created Git Repository, separate branch for first assignment, Makefile, CHANGELOG, README. Developed the map struct, started initializing map grid and printing map.
