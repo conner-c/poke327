@@ -1,0 +1,5 @@
+1/27/22: Created Git Repository, separate branch for first assignment, Makefile, CHANGELOG, README. Developed the map struct, started initializing map grid, and finished method to print map. Started development on seeding and growing different regions of the map.
+
+1/28/22: Continued working on placing a growing the seeds in random selected locations. Completed random seeding and grow_all. Issues with grow function.
+
+1/29/22: Finished grow function to fill out map using more recursive method. Added basic path, poke mart, poke center generation, and placement of extra terrain features like rocks and trees. Changed tall grass to a colon.
