@@ -67,7 +67,7 @@ void printMap(map_t *map)
 			enum terrain_type cell = map->map_grid[row][col];
 			switch (cell){
 				case tall_grass:
-					printf(",");
+					printf(":");
 					break;
 				case boulders:
 					printf("%%");
