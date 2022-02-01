@@ -4,9 +4,11 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+// Size of the map
 #define X 80
 #define Y 21
 
+// Different terrain features
 enum terrain_type 
 {
 	tall_grass,
@@ -23,6 +25,7 @@ enum terrain_type
 	mart
 };
 
+// Region combinations, c: clearing, t: tall grass, s: sand, and m: mixed
 enum region_combination
 {
 	c2t2s0m1,
@@ -31,6 +34,7 @@ enum region_combination
 	c2t2s1m2
 };
 
+// Different directions used to help grow the map
 enum directions{
 	Left = 0,
 	Right = 1,
@@ -38,6 +42,7 @@ enum directions{
 	Down = 3
 };
 
+// Map structure containing map features and exits
 typedef struct map
 {
 	enum terrain_type map_grid[Y][X];
@@ -47,7 +52,7 @@ typedef struct map
 	int south_exit;
 }map_t;
 
-
+// A help function to produce a random number between the lower and upper bound given
 int my_rand(int lower_bound, int upper_bound)
 {
 	static int counter;
@@ -56,6 +61,7 @@ int my_rand(int lower_bound, int upper_bound)
 	return rand() % (upper_bound - lower_bound) + lower_bound;
 }
 
+// Function that prints the map to screen
 void printMap(map_t *map)
 {
 	// Creating variables
@@ -114,7 +120,7 @@ void printMap(map_t *map)
 }
 
 
-
+// Used to place rand seed types based on the number of regions to spawn
 void place_seed(map_t *map, int region_number, enum terrain_type tt, int seed_local[7][2])
 {
 	int x, y;
@@ -157,8 +163,10 @@ void place_seed(map_t *map, int region_number, enum terrain_type tt, int seed_lo
 }
 
 
+// Grows the seed planted on the map outward
 void grow(int pos[2], map_t *map, int dir[4], enum terrain_type tt, bool was_visited[Y][X])
 {
+	// Determines if the seed had grown in a direction yet. Static to keep its value between recursive calls
 	static bool hasGrown;
 	hasGrown = false;
 	int i;
@@ -204,8 +212,10 @@ void grow(int pos[2], map_t *map, int dir[4], enum terrain_type tt, bool was_vis
 	return;
 }
 
+// Checks if the map has been filled with terrain features
 bool check_if_Full(map_t *map)
 {
+	// Iterates over the map checking for empty (debug) terrain features
 	int row, col;
 	for(row = 0; row < Y; row++){
 		for(col = 0; col < X; col++){
@@ -217,9 +227,11 @@ bool check_if_Full(map_t *map)
 	return true;
 }
 
-
+// Iterates over the map and fills in any empty (debug) spaces with neighboring terrain types
 void finish_map(map_t *map)
 {
+
+	// Iterates forward over terrain map
 	int col, row;
 	for(row = 0; row < Y; row++){
 		for(col = 0; col < X; col++){
@@ -234,6 +246,7 @@ void finish_map(map_t *map)
 				
 		}
 	}
+	// Iterates backward over terrain map if the first forward iteration did not catch all the empty spaces
 	if(!check_if_Full(map)){
 		for(row = Y -1; row > 0; row--){
 			for(col = X - 1; col > 0; col--){
@@ -251,7 +264,7 @@ void finish_map(map_t *map)
 	}
 }
 
-
+// Equally calls a grow function on the different terrain seeds to
 void grow_all(int seed_local[7][2], map_t *map, int num_of_regions)
 {
 	int i = 0;
@@ -263,11 +276,15 @@ void grow_all(int seed_local[7][2], map_t *map, int num_of_regions)
 
 	// Growing the map  
 	for(i = 0; i < 1500; i++){
+		// Creates map to check for already visited tiles in grow function
 		for(int k = 0; k < Y; k++){
+			// Map used to check if the tile has already been visited	
 			for(int l = 0; l < X; l++){
 				map_tile_check[k][l] = false;
 			}
 		}
+
+		// Creates an array that stores random directions for the seed to grown in a random direction
 		for(j = 0; j < my_rand(1,11); j++){
 			index_a = my_rand(0,4);
 			index_b = my_rand(0,4);
@@ -275,15 +292,17 @@ void grow_all(int seed_local[7][2], map_t *map, int num_of_regions)
 			dir[index_a] = dir[index_b];
 			dir[index_b] = tmp;
 		}
+		// Grow the given seed
 		grow(seed_local[i % num_of_regions], map, dir, map->map_grid[seed_local[i % num_of_regions][1]][seed_local[i % num_of_regions][0]], map_tile_check);
 	}
 
+	// If the map is not full fill the map
 	if(!check_if_Full(map)){
 		finish_map(map);
 	}
 }
 
-
+// Seeds the map with the randomly chosen terrain combination
 void seed_map(map_t *map)
 {
 	// Determining style of map to create
@@ -348,6 +367,7 @@ void seed_map(map_t *map)
 	grow_all(seed_local, map, counter -1);
 }
 
+// Generates exits at random positions along the North, South, East, and West sides of map
 void generate_exits(map_t *map)
 {	
 	map->west_exit = my_rand(5, 15);
@@ -360,6 +380,7 @@ void generate_exits(map_t *map)
 	map->map_grid[Y - 1][map->south_exit] = exitMap;
 }
 
+// Generates basic paths between exits
 void generate_paths(map_t *map)
 {
 	int east_west_path, i, diff_west_east_exits, counter;
@@ -369,13 +390,16 @@ void generate_paths(map_t *map)
 	printf("%d\n", abs(diff_west_east_exits));
 
 	// Generating EastWest Path
+	// Go east from the west exit by a random amount
 	for(i = 1; i <= east_west_path; i++){
 		map->map_grid[map->west_exit][i] = path;
 	}
+	// Go north or south till inline with east exit
 	for(i = map->west_exit; i <= (abs(diff_west_east_exits) + map->west_exit); i++){
 		map->map_grid[map->west_exit - counter * (diff_west_east_exits / abs(diff_west_east_exits))][east_west_path] = path;
 		counter++;
 	}
+	// Head east till at the east exit
 	for(i = east_west_path; i < X; i++){
 		map->map_grid[map->east_exit][i] = path;
 	}
@@ -385,25 +409,32 @@ void generate_paths(map_t *map)
 	diff_north_south = map->north_exit - map->south_exit;
 	counter = 0;
 
+
+	// Generating NorthSouth Path
+	// Go south from the north exit by a random amount
 	for(i = 1; i <= north_south_path; i++){
 		map->map_grid[i][map->north_exit] = path;
 	}
+	// Go east or west till inline with east exit
 	for(i = map->north_exit; i <= (abs(diff_north_south) + map->north_exit); i++){
 		map->map_grid[north_south_path][map->north_exit - counter * (diff_north_south / abs(diff_north_south))] = path;
 		counter++;
 	}
+	// Head south till at the south exit
 	for(i = north_south_path; i < Y; i++){
 		map->map_grid[i][map->south_exit] = path;
 	}
 
 }
 
+// Places poke centers and poke marts
 void generate_poke_centers(map_t *map){
+	// Places a Pokemon Center above the path that is coming out of the west exit
 	map->map_grid[map->west_exit - 1][5] = center;
 	map->map_grid[map->west_exit - 1][6] = center;
 	map->map_grid[map->west_exit - 2][5] = center;
 	map->map_grid[map->west_exit - 2][6] = center;
-
+	// Places a Pokemon Mart above the path that is coming out of the west exit
 	map->map_grid[map->west_exit - 1][8] = mart;
 	map->map_grid[map->west_exit - 1][9] = mart;
 	map->map_grid[map->west_exit - 2][8] = mart;
@@ -411,12 +442,14 @@ void generate_poke_centers(map_t *map){
 }
 
 
-
+// Places extra terrain types
 void place_extra_terrain(map_t *map){
 	int row, col;
+	// Iterates over the map placing trees and rocks randomly at different rates for different regions of the map
 	for(row = 1; row < Y - 1; row++){
 		for(col = 1; col < X - 1; col++){
 			switch(map->map_grid[row][col]){
+				// If the region is a clearing, then place trees at a rate of 7% and rocks at a rate of 3%
 				case clearing:
 					if(my_rand(0, 100) < 7){
 						map->map_grid[row][col] = tree;
@@ -425,6 +458,7 @@ void place_extra_terrain(map_t *map){
 						map->map_grid[row][col] = rock;
 					}
 					break;
+				// If the region is a tall grass, then place trees at a rate of 3% and rocks at a rate of 7%
 				case tall_grass:
 					if(my_rand(0, 100) < 3){
 						map->map_grid[row][col] = tree;
@@ -433,11 +467,13 @@ void place_extra_terrain(map_t *map){
 						map->map_grid[row][col] = rock;
 					}
 					break;
+				// If the region is a clearing, then place rocks at a rate of 15%
 				case sand:
 					if(my_rand(0, 100) < 15){
 						map->map_grid[row][col] = rock;
 					}
 					break;
+				// If the region is a clearing, then place trees at a rate of 3% and rocks at a rate of 3%
 				case mixed:
 					if(my_rand(0, 100) < 3){
 						map->map_grid[row][col] = tree;
@@ -464,6 +500,7 @@ void init_map(map_t *map){
 		map->map_grid[0][col] = boulders;
 		map->map_grid[Y - 1][col] = boulders;
 	}
+	// Creating empty spaces in middle
 	for(row = 1; row < Y - 1; row++){
 		for(col = 1; col < X - 1; col++){
 			map->map_grid[row][col] = debug;

@@ -3,3 +3,5 @@
 1/28/22: Continued working on placing a growing the seeds in random selected locations. Completed random seeding and grow_all. Issues with grow function.
 
 1/29/22: Finished grow function to fill out map using more recursive method. Added basic path, poke mart, poke center generation, and placement of extra terrain features like rocks and trees. Changed tall grass to a colon.
+
+2/2/22: Added comments to clarify code segments.
