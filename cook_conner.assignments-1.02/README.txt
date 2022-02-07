@@ -2,6 +2,3 @@ Create a map for the Pokemon game. The map size is 80 wide and 21 tall. There ar
 
 
 Can now traverse through different maps by typing e, w, n, s, or f x y. The overall size of the map is 399 by 399. Each containing its own unique map that lines up its exits with the corresponding exit of adjacent maps. Furthermore, the spawn rate of poke centers and marts now is based on a probability lowering as one moves away from the center of the map. Additionally, centers and marts now spawn more randomly within a given map terrain. When on the edge of the overall map, exits will not spawn going out of bounds. Lastly, one can not move the map position out of legal bounds. If w is entered when on the west edge of the map, map does not change and reprints the current map.
-
-
-BUG: Must enter two chars first like 'e' enter 'w' enter, and then it will start print the maps but will be behind. Example 'e' enter, 'w' enter, prints map to the east 's' enter, prints map to the west 'q' enter prints map to the south, 'n' enter, quits. The input gets delayed by one.
