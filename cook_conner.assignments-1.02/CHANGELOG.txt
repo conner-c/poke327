@@ -13,3 +13,7 @@
 2/6/22: Finished array of Map pointers and allocating new maps based on surrounding map pointers.
 
 2/7/22: Finished loop move between maps and flying to new locations without going out of bounds. Re-commented all my code.
+
+2/8/22: Updated rand to not change seed every time it is called. 
+
+2/9/22: Updated the generation of the first central map to guarantee a poke mart and center will spawn.

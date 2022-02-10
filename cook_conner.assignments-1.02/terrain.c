@@ -54,9 +54,6 @@ typedef struct map
 // Random generator between lower bound and upper bound
 int my_rand(int lower_bound, int upper_bound)
 {
-	static int counter;
-	srand(time(NULL) + counter);
-	counter++;
 	return rand() % (upper_bound - lower_bound) + lower_bound;
 }
 
@@ -882,6 +879,8 @@ void allocate_map(map_t *Overallmap[399][399], int x, int y){
 
 int main(int argc, char const *argv[])
 {
+	// Setting up the random seed
+	srand(time(NULL));
 	char i;
 	int x, y, mapx, mapy, r;
 	// Creates the overall map Array
@@ -894,16 +893,17 @@ int main(int argc, char const *argv[])
 		}
 	}
 
-	// Creates the first map
-	map_t map;
-	init_map(&map);
+	// Creates the first map manually to guarantee a poke mart and center
+	map_t *map = malloc(sizeof(map_t));
+	init_map(map);
+	generate_remaining_exits_rand(map);
+	generate_paths(map);
+	generate_poke_centers(map, 100);
 	// Place first map in the enter of the Overall map
-	Overallmap[199][199] = &map;
+	Overallmap[199][199] = map;
+
 	// Setting coordinates of the position in the overall map
 	x = y = 199;
-
-	// Finish setting up the first amp
-	allocate_map(Overallmap, x, y);
 	// Print the map and coordinates
 	printMap(Overallmap[y][x]);
 	printf("(%d, %d)\n", x - 199, 199 - y);
@@ -972,7 +972,14 @@ int main(int argc, char const *argv[])
 			// Print the external coordinates
 			printf("(%d, %d)\n", x - 199, 199 - y);
 		}
-
 	}
+
+	// Freeing up memory from Malloc
+	for (int i = 0; i < 399; i++){
+		for(int j = 0; j < 399; j++){
+			free(Overallmap[i][j]);
+		}
+	}
+
 	return 0;
 }
