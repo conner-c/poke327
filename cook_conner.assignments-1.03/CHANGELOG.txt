@@ -17,3 +17,7 @@
 2/8/22: Updated rand to not change seed every time it is called. 
 
 2/9/22: Updated the generation of the first central map to guarantee a poke mart and center will spawn.
+
+2/11/22: Added main poke.c file to run the main program. Updated makefile to handle the new file. Created a header file for terrain.c
+
+2/13/22: Created distance map, Dijkstra’s Algorithm, and helper methods. Took way to long to get a result that may or may not work. Currently does not connect to the main running program. Temp main in distanceMap.c to check if everything kinda works.

@@ -7,6 +7,7 @@
 #define X 80
 #define Y 21
 
+
 // Different terrain types. Debug used to initialize map
 enum terrain_type 
 {
@@ -21,7 +22,10 @@ enum terrain_type
 	exitMap,
 	path,
 	center,
-	mart
+	mart,
+	player,
+	kiker,
+	rival
 };
 
 // Different combination of region types, c2t2s1m1 = two clearings, two tall grass, 1 sand, and 1 mixed
@@ -49,6 +53,8 @@ typedef struct map
 	int east_exit;
 	int north_exit;
 	int south_exit;
+	int playerx;
+	int playery;
 }map_t;
 
 // Random generator between lower bound and upper bound
@@ -67,6 +73,10 @@ void printMap(map_t *map)
 	for(row = 0; row < Y; row++){
 		for(col = 0; col < X; col++){
 			enum terrain_type cell = map->map_grid[row][col];
+			if(row == map->playery && col == map->playerx){
+				printf("@");
+				continue;
+			}
 			switch (cell){
 				case tall_grass:
 				printf(":");
@@ -106,6 +116,8 @@ void printMap(map_t *map)
 				case rock:
 				printf("-");
 				break;
+				case player:
+				printf("@");
 				default:
 				printf(" ");
 				break;
@@ -372,15 +384,6 @@ void generate_remaining_exits_rand(map_t *map)
 	}
 }
 
-// Returns the min between two numbers
-int min(int a, int b){
-	return (a > b) ? b : a;
-}
-
-// Returns the max of two numbers
-int max(int a, int b){
-	return (a < b) ? b : a;
-}
 
 // Creates paths between exits
 void generate_paths(map_t *map)
@@ -871,115 +874,11 @@ void allocate_map(map_t *Overallmap[399][399], int x, int y){
 		prob = 5;
 	}
 	// Generate centers and marts
+	if(d == 0){
+		prob = 100;
+	}
 	generate_poke_centers(map, prob);
 
 	// Place the map in the overall map Array
 	Overallmap[y][x] = map;
-}
-
-int main(int argc, char const *argv[])
-{
-	// Setting up the random seed
-	srand(time(NULL));
-	char i;
-	int x, y, mapx, mapy, r;
-	// Creates the overall map Array
-	map_t *Overallmap[399][399];
-
-	// Initializes all the cells to NULL
-	for(int col = 0; col < 399; col++){
-		for(int row = 0; row < 399; row++){
-			Overallmap[row][col] = NULL;
-		}
-	}
-
-	// Creates the first map manually to guarantee a poke mart and center
-	map_t *map = malloc(sizeof(map_t));
-	init_map(map);
-	generate_remaining_exits_rand(map);
-	generate_paths(map);
-	generate_poke_centers(map, 100);
-	// Place first map in the enter of the Overall map
-	Overallmap[199][199] = map;
-
-	// Setting coordinates of the position in the overall map
-	x = y = 199;
-	// Print the map and coordinates
-	printMap(Overallmap[y][x]);
-	printf("(%d, %d)\n", x - 199, 199 - y);
-
-	bool entered;
-	// Until a q is press, allow user to change Overall map position
-	while(1){
-		entered = false;
-		printf("\n");
-		// Scans user input for direction to go or to fly to
-		r = scanf("%c, %4d, %4d", &i, &mapx, &mapy);
-
-		// If only a direction was specified
-		if(r == 1){
-			// If e was entered allocate map to the east and increment the coordinates
-			if(i == 'e' && x < 398){
-				if(Overallmap[y][x + 1] == NULL){
-					allocate_map(Overallmap, x + 1, y);
-				}
-				x++;
-				entered = true;
-			}
-			// If w was entered allocate map to the west and decrement the coordinates
-			else if(i == 'w' && x > 0){
-				if(Overallmap[y][x - 1] == NULL){
-					allocate_map(Overallmap, x - 1, y);
-				}
-				x--;
-				entered = true;
-			}
-			// If n was entered allocate map to the north and decrement the coordinates
-			else if(i == 'n' && y > 0){
-				if(Overallmap[y - 1][x] == NULL){
-					allocate_map(Overallmap, x, y - 1);
-				}
-				y--;
-				entered = true;
-			}
-			// If s was entered allocate map to the south and increment the coordinates
-			else if(i == 's' && y < 398){
-				if(Overallmap[y + 1][x] == NULL){
-					allocate_map(Overallmap, x, y + 1);
-				}
-				y++;
-				entered = true;
-			}
-			// If q was entered break out of the loop
-			else if(i == 'q'){
-				break;
-			}
-		}
-		// If all three fields were specified and the the given coordinates were in bounds then fly to that location and update coordinates
-		if(r == 3 && i == 'f' && (mapx < 200 && mapx > -200) && (mapy < 200 && mapy > -200)){
-			x = mapx + 199;
-			y = 199 - mapy;
-			entered = true;
-			if(Overallmap[y][x] == NULL){
-				allocate_map(Overallmap, x, y);
-			}
-		}
-
-		// If a valid char was entered then print map and coordinates
-		if(entered){
-			// Print map at coordinates
-			printMap(Overallmap[y][x]);
-			// Print the external coordinates
-			printf("(%d, %d)\n", x - 199, 199 - y);
-		}
-	}
-
-	// Freeing up memory from Malloc
-	for (int i = 0; i < 399; i++){
-		for(int j = 0; j < 399; j++){
-			free(Overallmap[i][j]);
-		}
-	}
-
-	return 0;
 }
