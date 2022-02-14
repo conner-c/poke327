@@ -882,3 +882,71 @@ void allocate_map(map_t *Overallmap[399][399], int x, int y){
 	// Place the map in the overall map Array
 	Overallmap[y][x] = map;
 }
+
+
+// Sets the player coordinates to a random position on a path
+void random_pc(map_t *map){
+	bool placed = false;
+	int d = my_rand(0, 5);
+	int i = 1;
+
+	// Places it on the East path
+	if(d == 1){
+		while(map->map_grid[map->west_exit][i] == path){
+			if(my_rand(0,11) > 7){
+				map->playerx = i;
+				map->playery = map->west_exit;
+				placed = true;
+				break;
+			}
+			i++;
+		}
+	}
+	// Places it on the North path
+	else if(d == 2){
+		while(map->map_grid[i][map->north_exit] == path){
+			if(my_rand(0,11) > 7){
+				map->playerx = map->north_exit;
+				map->playery = i;
+				placed = true;
+				break;
+			}
+			i++;
+		}
+	}
+
+	// Places it on the East path
+	else if(d == 3){
+		i = 78;
+		while(map->map_grid[map->east_exit][i] == path){
+			if(my_rand(0,11) > 7){
+				map->playerx = i;
+				map->playery = map->east_exit;
+				placed = true;
+				break;
+			}
+			i--;
+		}
+	}
+
+	// Places it on the south path
+	else if(d == 3){
+		i = 19;
+		while(map->map_grid[i][map->south_exit] == path){
+			if(my_rand(0,11) > 7){
+				map->playerx = map->south_exit;
+				map->playery = i;
+				placed = true;
+				break;
+			}
+			i--;
+		}
+	}
+
+	// If it failed to place it, place it on a guaranteed path spot
+	if(!placed){
+		map->playerx = 5;
+		map->playery = map->west_exit;
+	}
+
+}

@@ -7,7 +7,15 @@ extern "C" {
 
 # include <stdint.h>
 
-struct heap_node;
+struct heap_node {
+  struct heap_node *next;
+  struct heap_node *prev;
+  struct heap_node *parent;
+  struct heap_node *child;
+  void *datum;
+  uint32_t degree;
+  uint32_t mark;
+};
 typedef struct heap_node heap_node_t;
 
 typedef struct heap {

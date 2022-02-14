@@ -1,4 +1,5 @@
 #include "terrain.h"
+#include "distanceMap.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -22,6 +23,22 @@ int main(int argc, char const *argv[])
 	// Setting coordinates of the position in the overall map
 	x = y = 199;
 	allocate_map(Overallmap, x, y);
+
+
+	random_pc(Overallmap[y][x]);
+	int arr[21][80];
+	enum trainers hiker = h;
+	enum trainers rival = rival_cost;
+
+	// Hiker distance map
+	create_dis_map(Overallmap[y][x]->playerx, Overallmap[y][x]->playery, arr, hiker, Overallmap[y][x]);
+	print_dis_map(arr);
+
+	// Rival distance map
+	create_dis_map(Overallmap[y][x]->playerx, Overallmap[y][x]->playery, arr, rival, Overallmap[y][x]);
+	print_dis_map(arr);
+
+
 	// Print the map and coordinates
 	printMap(Overallmap[y][x]);
 	printf("(%d, %d)\n", x - 199, 199 - y);
@@ -81,10 +98,20 @@ int main(int argc, char const *argv[])
 			if(Overallmap[y][x] == NULL){
 				allocate_map(Overallmap, x, y);
 			}
-		}
+		}	
 
 		// If a valid char was entered then print map and coordinates
 		if(entered){
+			// Randomly place pc on a path
+			random_pc(Overallmap[y][x]);
+			// Hiker distance map
+			create_dis_map(Overallmap[y][x]->playerx, Overallmap[y][x]->playery, arr, h, Overallmap[y][x]);
+			print_dis_map(arr);
+
+			// Rival distance map
+			create_dis_map(Overallmap[y][x]->playerx, Overallmap[y][x]->playery, arr, r, Overallmap[y][x]);
+			print_dis_map(arr);
+
 			// Print map at coordinates
 			printMap(Overallmap[y][x]);
 			// Print the external coordinates

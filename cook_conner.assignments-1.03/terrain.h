@@ -58,5 +58,6 @@ bool check_if_Full(map_t *map);
 void grow(int pos[2], map_t *map, int dir[4], enum terrain_type tt, bool was_visited[21][80]);
 void place_seed(map_t *map, int region_number, enum terrain_type tt, int seed_local[7][2]);
 int my_rand(int lower_bound, int upper_bound);
+void random_pc(map_t *map);
 
 #endif

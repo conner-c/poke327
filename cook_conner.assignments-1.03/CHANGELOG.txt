@@ -21,3 +21,5 @@
 2/11/22: Added main poke.c file to run the main program. Updated makefile to handle the new file. Created a header file for terrain.c
 
 2/13/22: Created distance map, Dijkstra’s Algorithm, and helper methods. Took way to long to get a result that may or may not work. Currently does not connect to the main running program. Temp main in distanceMap.c to check if everything kinda works.
+
+2/14/22: Finished the distance map creating and function to print the distance map. Wrapped up the distanceMap.c into a header file removing the main from it and changing it to the function to call to set an array to a distance array given enough information. Connected the distanceMap.h file to the main poke file. This allows distance maps to be printed every time one moves around in the overall map. Added a function in terrain to randomly set player coordinates on the map.
