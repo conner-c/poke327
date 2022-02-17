@@ -1,0 +1,25 @@
+1/27/22: Created Git Repository, separate branch for first assignment, Makefile, CHANGELOG, README. Developed the map struct, started initializing map grid, and finished method to print map. Started development on seeding and growing different regions of the map.
+
+1/28/22: Continued working on placing a growing the seeds in random selected locations. Completed random seeding and grow_all. Issues with grow function.
+
+1/29/22: Finished grow function to fill out map using more recursive method. Added basic path, poke mart, poke center generation, and placement of extra terrain features like rocks and trees. Changed tall grass to a colon.
+
+2/3/22: Updated spawning center and mart to take a probability to spawn them.
+
+2/4/22: Updating path generation to handle if exits do not spawn and exit generation with preset exit values and random otherwise if not on edge
+
+2/5/22: Started working on Map pointer array and updating spawn location and rate of poke centers and marts.
+
+2/6/22: Finished array of Map pointers and allocating new maps based on surrounding map pointers.
+
+2/7/22: Finished loop move between maps and flying to new locations without going out of bounds. Re-commented all my code.
+
+2/8/22: Updated rand to not change seed every time it is called. 
+
+2/9/22: Updated the generation of the first central map to guarantee a poke mart and center will spawn.
+
+2/11/22: Added main poke.c file to run the main program. Updated makefile to handle the new file. Created a header file for terrain.c
+
+2/13/22: Created distance map, Dijkstra’s Algorithm, and helper methods. Took way to long to get a result that may or may not work. Currently does not connect to the main running program. Temp main in distanceMap.c to check if everything kinda works.
+
+2/14/22: Finished the distance map creating and function to print the distance map. Wrapped up the distanceMap.c into a header file removing the main from it and changing it to the function to call to set an array to a distance array given enough information. Connected the distanceMap.h file to the main poke file. This allows distance maps to be printed every time one moves around in the overall map. Added a function in terrain to randomly set player coordinates on the map.
