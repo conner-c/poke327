@@ -330,26 +330,7 @@ void seed_map(map_t *map)
 	grow_all(seed_local, map, counter -1);
 }
 
-// Generates exits yet to be placed
-void generate_remaining_exits_rand(map_t *map)
-{	
-	if(map->west_exit == -1){
-		map->west_exit = my_rand(5, 15);
-		map->t_map_grid[map->west_exit][0] = exitMap;
-	}
-	if(map->east_exit == -1){
-		map->east_exit = my_rand(5, 15);
-		map->t_map_grid[map->east_exit][X - 1] = exitMap;
-	}
-	if(map->north_exit == -1){
-		map->north_exit = my_rand(11, 75);
-		map->t_map_grid[0][map->north_exit] = exitMap;
-	}
-	if(map->south_exit == -1){
-		map->south_exit = my_rand(11, 75);
-		map->t_map_grid[Y - 1][map->south_exit] = exitMap;
-	}
-}
+
 
 
 // Creates paths between exits
@@ -782,6 +763,36 @@ void init_map(map_t *map){
 } 
 
 
+void place_exits(map_t* map){
+	
+	for(int i = 1; i < 21; i++){
+		if(map->t_map_grid[i][1] == path){
+			map->t_map_grid[i][0] = exitMap;
+			map->west_exit = i;
+		}
+	}	
+	for(int i = 1; i < 21; i++){
+		if(map->t_map_grid[i][78] == path){
+			map->t_map_grid[i][79] = exitMap;
+			map->east_exit = i;
+		}
+	}
+	for(int i = 1; i < 80; i++){
+		if(map->t_map_grid[1][i] == path){
+			map->t_map_grid[0][i] = exitMap;
+			map->north_exit = i;
+		}
+	}	
+	for(int i = 1; i < 80; i++){
+		if(map->t_map_grid[1][i] == path){
+			map->t_map_grid[0][i] = exitMap;
+			map->south_exit = i;
+		}
+	}
+}
+
+
+
 // Allocates a new map at the given Overall map position
 void allocate_map(map_t* map, int x, int y, map_t* Overallmap[399][399]){
 	int prob, d;
@@ -790,12 +801,16 @@ void allocate_map(map_t* map, int x, int y, map_t* Overallmap[399][399]){
 
 	// Checking for non-NULL neighbors and for boundary check
 	// Checking West Map if not null and not out of bounds
-	if(x - 1 > -1 && (Overallmap[y][x - 1]) != NULL){
-		map->west_exit = (Overallmap[y][x - 1])->east_exit;
+	if(x - 1 >= 0 && (Overallmap[y][x - 1]) != NULL){
+		map->west_exit = Overallmap[y][x - 1]->east_exit;
 	}
 	// Checking if West is out of bounds
 	else if(x - 1 == -1){
-		map->west_exit = -2;
+		map->west_exit = -1;
+	}
+	else{
+		map->west_exit = my_rand(5, 15);
+		map->t_map_grid[map->west_exit][0] = exitMap;
 	}
 
 	// Checking East Map if not null and not out of bounds
@@ -804,7 +819,11 @@ void allocate_map(map_t* map, int x, int y, map_t* Overallmap[399][399]){
 	}
 	// Checking if East is out of bounds
 	else if(x + 1 == 399){
-		map->east_exit = -2;
+		map->east_exit = -1;
+	}
+	else {
+		map->east_exit = my_rand(5, 15);
+		map->t_map_grid[map->east_exit][X - 1] = exitMap;		
 	}
 
 	// Checking North Map if not null and not out of bounds
@@ -813,7 +832,11 @@ void allocate_map(map_t* map, int x, int y, map_t* Overallmap[399][399]){
 	}
 	// Checking if North is out of bounds
 	else if(y - 1 < 0){
-		map->north_exit = -2;
+		map->north_exit = -1;
+	}
+	else{
+		map->north_exit = my_rand(11, 75);
+		map->t_map_grid[0][map->north_exit] = exitMap;
 	}
 	
 	// Checking South Map if not null and not out of bounds
@@ -824,9 +847,10 @@ void allocate_map(map_t* map, int x, int y, map_t* Overallmap[399][399]){
 	else if(y + 1 == 399){
 		map->south_exit = -2;
 	}
-	
-	// Generates remaining exits
-	generate_remaining_exits_rand(map);
+	else{
+		map->south_exit = my_rand(11, 75);
+		map->t_map_grid[Y - 1][map->south_exit] = exitMap;
+	}
 
 	//Generates paths
 	generate_paths(map);
@@ -844,21 +868,7 @@ void allocate_map(map_t* map, int x, int y, map_t* Overallmap[399][399]){
 		prob = 100;
 	}
 	generate_poke_centers(map, prob);
-	
-	// Place the map in the overall map Array
-	if(map->north_exit > 0){
-		map->t_map_grid[0][map->north_exit] = exitMap;
-	}
-	if(map->south_exit > 0){
-		map->t_map_grid[20][map->south_exit] = exitMap;
-	}
-	if(map->east_exit > 0){
-		map->t_map_grid[map->east_exit][0] = exitMap;
-	}
-	if(map->west_exit > 0){
-		map->t_map_grid[map->west_exit][79] = exitMap;
-	}
-
+	place_exits(map);
 	Overallmap[y][x] = map;
 }
 

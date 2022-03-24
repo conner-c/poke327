@@ -9,16 +9,10 @@
 1.04 New update now features movement of NPC. Each NPC has a turn based on their movement cost. Each NPC has unique movement, rivals (r) and hikers (h) head straight for the player. Pacers (p) will move back and forth in a single direction turning around once they hit something they cannot move through. This includes characters, so if a pacer hits a character they will turn around instead of waiting for that character to move. Wanders (w) will try their best to stay in their starting terrain. Some wanders will be able move accross both clearings and tall grass if they were spawned in a mixed location. They will not cross rocks, paths, or any impassable terrain. Rand walkers (n) will move around randomly, they can also step into any territory that is passable (cannot pass trees, boulders, exits, and structures). After each movement, they will pick a new direction to go or pick the same direction. There is nothing stopping a random walker from going left, right, left, right etc, so they could have some weird movements. The player character will always spawn somewhere on a road and choose its movement as staying put. To specify a certain number of trainers to spawn, you can add the switch --numtrainers followed by an integer representing the number of characters to spawn. To be clear after running the make commands below, instead of ./run you could do ./run --numtrainers # to set number of characters equal to # where # is an integer. It is assumed the user enters an integer and the function atoi does not fail. As their is no check if atoi fails as the user could have also desired 0 characters to spawn and on a fail atoi also returns 0 on a fail.
 
 
-1.05 
+1.05: Now updated to allow the user to control the pc. They can move around the map like other characters, but they can also move onto buildings. Players can initiate a battle by trying to walk into a trainer, or by letting a trainer walk into them. One can get a list of all the trainers on the map by pressing t. If the list seems full, you can press the up and down arrow keys to shift to trainers being listed. Waiting on a building does not cause time to pass as to not allow the user to wait until global time constraints that might be implemented in the future. You can also move between overall map areas by walking onto an exit (side areas of the map indicated with #). All controls are implanted as per the assignment details.
 
 To compile and run the code. Enter the following commands
 make all
 make link
 ./run
 This should accurately build and link all files necessary for running the program into a run.exe file for execution.
-
-
-PLEASE READ BUGS:
-Currently when displaying trainers, there is a chance for a NPC to have a negative distance from trainer in the south direction. Moving the player around will sometimes fix the issue, and even if you return the player to the location it happened before, it might not reoccur. Currently, I do not see a fix for the issue and it does not harm game play much; therefore, I have left the bug in for now.
-
-Currently when moving to a eastern map there is a chance for no map exit to spawn from where they just came from.

@@ -8,6 +8,10 @@
 #include <string.h>
 #include <ncurses.h>
 
+
+
+
+
 int main(int argc, char const *argv[])
 {
 	// Have Curses take over the screen
@@ -19,6 +23,7 @@ int main(int argc, char const *argv[])
 	noecho();
 	// Makes cursor visibility 0
 	curs_set(0);
+	keypad(stdscr, TRUE);
 
 	// Determines the number of characters, default is 10 if not specified by the user
 	int numc = 10;
@@ -84,6 +89,7 @@ int main(int argc, char const *argv[])
 				}
 				// Reset all character movements to 0
 				set_movement_0(curr_map);
+				curr_map->cmap[player->y][player->x] = NULL;
 				// Swap the current map
 				curr_map = Overallmap[y][x];
 				// Populate the new current map
@@ -101,17 +107,19 @@ int main(int argc, char const *argv[])
 			// Moving to the east map
 			else if(player->x == 79){
 				x = x + 1;
+				// Reset all character movements to 0
+				set_movement_0(curr_map);
+				curr_map->cmap[player->y][player->x] = NULL;
 				// If the west map is not allocated yet allocate it
 				if(Overallmap[y][x] == NULL){
 					map = malloc(sizeof(map_t));
 					allocate_map(map, x, y, Overallmap);
+					// Populate the new current map
+					populate_character_map(map, numc);
 				}
-				// Reset all character movements to 0
-				set_movement_0(curr_map);
 				// Swap the current map
 				curr_map = Overallmap[y][x];
-				// Populate the new current map
-				populate_character_map(curr_map, numc);
+				
 				// Remove all characters from the heap
 				while(c_heap.size){
 					heap_remove_min(&c_heap);
@@ -122,44 +130,56 @@ int main(int argc, char const *argv[])
 				printMap(curr_map);
 				refresh();
 			}
+
 			// Moving to the north map
 			else if(player->y == 0){
 				y = y - 1;
+				// Reset all character movements to 0
+				set_movement_0(curr_map);
+				curr_map->cmap[player->y][player->x] = NULL;
 				// If the west map is not allocated yet allocate it
 				if(Overallmap[y][x] == NULL){
 					map = malloc(sizeof(map_t));
 					allocate_map(map, x, y, Overallmap);
+					// Populate the new current map
+					populate_character_map(map, numc);
 				}
-				// Reset all character movements to 0
-				set_movement_0(curr_map);
 				// Swap the current map
 				curr_map = Overallmap[y][x];
-				// Populate the new current map
-				populate_character_map(curr_map, numc);
+				
 				// Remove all characters from the heap
 				while(c_heap.size){
 					heap_remove_min(&c_heap);
 				}
-				curr_map->cmap[19][curr_map->south_exit] = player;
+				// curr_map->cmap[19][curr_map->south_exit] = player;
+				for(int i = 0; i < 80; i++){
+					if(curr_map->t_map_grid[19][i] == path){
+						curr_map->cmap[19][i] = player;
+					}
+				}
+
 				// Insert all the new characters into the heap
 				insert_characters(curr_map, &c_heap);
 				printMap(curr_map);
 				refresh();
 			}
+
 			// Moving to the south map
 			else if(player->y == 20){
 				y = y + 1;
+				// Reset all character movements to 0
+				set_movement_0(curr_map);
+				curr_map->cmap[player->y][player->x] = NULL;
 				// If the west map is not allocated yet allocate it
 				if(Overallmap[y][x] == NULL){
 					map = malloc(sizeof(map_t));
 					allocate_map(map, x, y, Overallmap);
+					// Populate the new current map
+					populate_character_map(map, numc);
 				}
-				// Reset all character movements to 0
-				set_movement_0(curr_map);
 				// Swap the current map
 				curr_map = Overallmap[y][x];
-				// Populate the new current map
-				populate_character_map(curr_map, numc);
+
 				// Remove all characters from the heap
 				while(c_heap.size){
 					heap_remove_min(&c_heap);
@@ -181,78 +201,3 @@ int main(int argc, char const *argv[])
 	}
 	return 0;
 }
-
-
-
-/**	
-if(player->x == 0){
-	// If the west map is not allocated yet allocate it
-	if(Overallmap[y][x - 1] == NULL){
-		allocate_map(Overallmap, y, x - 1);
-	}
-	// Reset all character movements to 0
-	set_movement_0(curr_map);
-	// Swap the current map
-	curr_map = Overallmap[y][x - 1];
-	// Populate the new current map
-	populate_character_map(curr_map, numc);
-	// Remove all characters from the heap
-	while(c_heap.size){
-		heap_remove_min(&c_heap);
-	}
-	// Insert all the new characters into the heap
-	insert_characters(curr_map, &c_heap);
-}
-else if(player->y == 0){
-	// If the west map is not allocated yet allocate it
-	if(Overallmap[y - 1][x] == NULL){
-		allocate_map(Overallmap, y - 1, x);
-	}
-	// Reset all character movements to 0
-	set_movement_0(curr_map);
-	// Swap the current map
-	curr_map = Overallmap[y - 1][x];
-	// Populate the new current map
-	populate_character_map(curr_map, numc);
-	// Remove all characters from the heap
-	while(c_heap.size){
-		heap_remove_min(&c_heap);
-	}
-	// Insert all the new characters into the heap
-	insert_characters(curr_map, &c_heap);
-}
-else if(player->x == 79){
-	// If the west map is not allocated yet allocate it
-	if(Overallmap[y][x + 1] == NULL){
-		allocate_map(Overallmap, y, x + 1);
-	}
-	// Reset all character movements to 0
-	set_movement_0(curr_map);
-	// Swap the current map
-	curr_map = Overallmap[y][x + 1];
-	// Populate the new current map
-	populate_character_map(curr_map, numc);
-	// Remove all characters from the heap
-	while(c_heap.size){
-		heap_remove_min(&c_heap);
-	}
-	// Insert all the new characters into the heap
-	insert_characters(curr_map, &c_heap);
-}
-else if(player->y == 20){
-	// If the west map is not allocated yet allocate it
-	if(Overallmap[y + 1][x] == NULL){
-		allocate_map(Overallmap, y + 1, x);
-	}
-	// Reset all character movements to 0
-	set_movement_0(curr_map);
-	// Swap the current map
-	curr_map = Overallmap[y + 1][x];
-	// Populate the new current map
-	populate_character_map(curr_map, numc);
-	// Remove all characters from the heap
-	while(c_heap.size){
-		heap_remove_min(&c_heap);
-	}
-	**/
-	// Insert all the new characters into the heap

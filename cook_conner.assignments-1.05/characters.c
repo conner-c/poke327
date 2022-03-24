@@ -680,7 +680,7 @@ void write_list(map_t* map, character_t** arr_c, int start, int end, int player_
 			sprintf(num, "%d", arr_c[i]->x - player_x);
 			addstr(num);
 		}
-		// In south east
+		// In south west
 		else if(arr_c[i]->x - player_x <= 0 && arr_c[i]->y - player_y >= 0){
 			addstr(", south ");
 			sprintf(num, "%d", arr_c[i]->y - player_y);
@@ -689,7 +689,7 @@ void write_list(map_t* map, character_t** arr_c, int start, int end, int player_
 			sprintf(num, "%d", player_x - arr_c[i]->x);
 			addstr(num);
 		}
-		// In south west
+		// In south east
 		else if(arr_c[i]->x - player_x >= 0 && arr_c[i]->y - player_y >= 0){
 			addstr(", south ");
 			sprintf(num, "%d", arr_c[i]->y - player_y);
@@ -722,25 +722,26 @@ void write_list(map_t* map, character_t** arr_c, int start, int end, int player_
 			addstr(num);
 		}
 		// In south east
-		else if(arr_c[i + 1]->x - player_x <= 0 && arr_c[i + 1]->y - player_y >= 0){
+		else if(arr_c[i + 1]->x - player_x >= 0 && arr_c[i+1]->y - player_y >= 0){
 			addstr(", south ");
-			sprintf(num, "%2d", arr_c[i]->y - player_y);
+			sprintf(num, "%d", arr_c[i + 1]->y - player_y);
 			addstr(num);
-			addstr(", west ");
-			sprintf(num, "%2d", player_x - arr_c[i + 1]->x);
+			addstr(", east ");
+			sprintf(num, "%d", arr_c[i + 1]->x - player_x);
 			addstr(num);
 		}
 		// In south west
-		else if(arr_c[i + 1]->x - player_x >= 0 && arr_c[i + 1]->y - player_y >= 0){
+		else if(arr_c[i + 1]->x - player_x <= 0 && arr_c[i+1]->y - player_y >= 0){
 			addstr(", south ");
-			sprintf(num, "%2d", arr_c[i + 1]->y - player_y);
+			sprintf(num, "%d", arr_c[i + 1]->y - player_y);
 			addstr(num);
-			addstr(", east ");
-			sprintf(num, "%2d", arr_c[i + 1]->x - player_x);
+			addstr(", west ");
+			sprintf(num, "%d", player_x - arr_c[i + 1]->x);
 			addstr(num);
 		}
 		counter++;
 	}
+	refresh();
 }
 
 
@@ -1240,7 +1241,7 @@ int move_pc(character_t* c, map_t* map){
 						}
 						else{
 							clear();
-							mvaddstr(10,35, "You have entered a building press esc to exit");
+							mvaddstr(10,35, "You have entered a building press < to exit");
 							refresh();
 							while(1){
 								if(getch() == '<'){
@@ -1255,7 +1256,7 @@ int move_pc(character_t* c, map_t* map){
 
 				// Wait
 				case '5':
-					if(popup){
+					if(popup || map->t_map_grid[y][x] == mart || map->t_map_grid[y][x] == center){
 						continue;
 					}
 					c->movement_cost = c->movement_cost + get_tile_cost(x, y, map, pc);
@@ -1291,7 +1292,7 @@ int move_pc(character_t* c, map_t* map){
 				continue;
 				break;
 
-			case KEY_DOWN:				
+			case 3:				
 				// Shifts list of trainers
 				if(start >= 36 && popup){
 					end = start;
@@ -1301,7 +1302,7 @@ int move_pc(character_t* c, map_t* map){
 				}
 				continue;
 			
-			case KEY_UP:
+			case 2:
 				if(end < n && popup){
 					start = end;
 					end += 36;

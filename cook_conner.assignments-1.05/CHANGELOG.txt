@@ -37,3 +37,5 @@
 3/21/22: Implemented player movement, curses visuals, and started the list of trainers.
 
 3/23/22: Finished the trainer list and movement between maps. Currently there are two know bugs see README.
+
+3/24/22: Fixed the bugs that was causing errors. Now a complete working build as for assignment 1.05
